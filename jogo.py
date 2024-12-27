@@ -6,6 +6,7 @@ from PPlay.sprite import *
 from PPlay.animation import *
 
 
+
 # Definição da Função JOGO
 def jogo(janela):
 
@@ -19,7 +20,7 @@ def jogo(janela):
     voltar = False                          #Voltar à Tela inicial
     vel = 300                               #Velocidade dos personagens
 
-    idle = ("Warrior_Blue_FILAS/Warrior_Blue_Parado_1x1.png",
+    idle = ("Warrior_Blue_FILAS/Warrior_Blue_Parado_Right_1x1.png",
             "Warrior_Blue_FILAS/Warrior_Blue_Parado_Left_1x1.png")
 
     walking = ("Warrior_Blue_FILAS/Warrior_Blue_Correndo_2x1.png",
@@ -28,12 +29,30 @@ def jogo(janela):
     atack = (("Warrior_Blue_FILAS/Warrior_Blue_Atk-1-RIGHT_3x1.png", "Warrior_Blue_FILAS/Warrior_Blue_Atk-1-LEFT_3x1.png"),
              ("Warrior_Blue_FILAS/Warrior_Blue_Atk-2-RIGHT_4x1.png", "Warrior_Blue_FILAS/Warrior_Blue_Atk-2-LEFT_4x1.png"))
 
+    # Variáveis com "_g" referentes ao Goblin
+    idle_g = ("Torch_Red_Goblin_FILAS/Torch_Red_Parado_RIGHT_1x1.png",
+            "Torch_Red_Goblin_FILAS/Torch_Red_Parado_LEFT_1x1.png")
+
+    walking_g = ("Torch_Red_Goblin_FILAS/Torch_Red_Right_Correndo_2x1.png",
+               "Torch_Red_Goblin_FILAS/Torch_Red_Left_Correndo_2x1.png")
+
+    atack_g = ("Torch_Red_Goblin_FILAS/Torch_Red_Atk-RIGHT_3x1.png", "Torch_Red_Goblin_FILAS/Torch_Red_Atk-LEFT_3x1.png")
+
+    #Sprite do Player/Warrior
     player = Sprite(idle[0], 6)
     player.set_sequence_time(0, 1152, 100, True)
     player.set_position(janela.width/2 - 200, janela.height/2 - 200)
+
+    #Sprite do Inimigo/Goblin com tocha
+    goblin = Sprite(idle[0], 7)
+    goblin.set_sequence_time(0, 1344, 100, True)
+    goblin.set_position(1000, 600)
+
     tempo_animacao = 50/6
+    tempo_animacao_g = 50/7
     tempo_ataque = 50 / 6
     direcao = 0
+    direcao_g = 0
     cooldown_forte = 0
     cooldown_fraco = 0
     atacou_forte = False
@@ -110,13 +129,46 @@ def jogo(janela):
                                             and not teclado.key_pressed("e")):
             player.image = pygame.image.load(idle[direcao]).convert_alpha()
 
+
+        # Movimentação do Goblin, ainda sem atacar
+        if teclado.key_pressed("right") and goblin.x < janela.width - goblin.width:
+            direcao_g = 0
+            goblin.image = pygame.image.load(walking_g[direcao_g]).convert_alpha()
+            goblin.move_x(vel * janela.delta_time())
+
+        if teclado.key_pressed("left") and goblin.x >= 0:
+            direcao_g = 1
+            goblin.image = pygame.image.load(walking_g[direcao_g]).convert_alpha()
+            goblin.move_x(vel * janela.delta_time() * (-1))
+
+        if teclado.key_pressed("down") and goblin.y <= janela.height - goblin.height:
+            goblin.image = pygame.image.load(walking_g[direcao_g]).convert_alpha()
+            goblin.move_y(vel * janela.delta_time())
+
+        if teclado.key_pressed("up") and goblin.y >= 0:
+            goblin.image = pygame.image.load(walking_g[direcao_g]).convert_alpha()
+            goblin.move_y(vel * janela.delta_time() * (-1))
+
+        if (not teclado.key_pressed("up") and not teclado.key_pressed("right") and not teclado.key_pressed("down") and
+                                            not teclado.key_pressed("left")):
+            goblin.image = pygame.image.load(idle_g[direcao_g]).convert_alpha()
+
         if tempo_animacao <= 0:
             player.stop()
+            goblin.stop()
             tempo_animacao = 50/6
+            tempo_animacao_g = 50/7
 
         tempo_animacao -= (100/6) * janela.delta_time()
+        tempo_animacao_g -= (100/7) * janela.delta_time()
 
         player.play()
+        goblin.play()
+
         player.update()
+        goblin.update()
+
         player.draw()
+        goblin.draw()
+
         janela.update()
