@@ -1,4 +1,5 @@
 from jogo import *
+from Functions import *
 from PPlay.window import *
 
 # Definição da Janela do MENU, seu título e tamanho
@@ -57,7 +58,7 @@ while True:
 
         if mouse.is_button_pressed(1):
 
-            jogo(janela)
+            tutorial(janela)
     else:
         botao_jogar.draw()
 
