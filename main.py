@@ -1,5 +1,4 @@
-from PPlay.window import *
-from menu import *
+from GameWindows.menu import *
 
 # Definição da Janela do MENU, seu título e tamanho
 janela = Window(1500, 800)
